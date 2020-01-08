@@ -143,10 +143,9 @@ if __name__ == '__main__':
     #use tensorboard
     if not os.path.exists(settings.LOG_DIR):
         os.mkdir(settings.LOG_DIR)
-    writer = SummaryWriter(log_dir=os.path.join(
-            settings.LOG_DIR, args.net, settings.TIME_NOW))
+ 
     input_tensor = torch.Tensor(12, 3, 32, 32).cuda()
-    writer.add_graph(net, Variable(input_tensor, requires_grad=True))
+#    writer.add_graph(net, Variable(input_tensor, requires_grad=True))
 
     #create checkpoint folder to save model
     if not os.path.exists(checkpoint_path):
@@ -155,6 +154,8 @@ if __name__ == '__main__':
 
     best_acc = 0.0
     for epoch in range(1, settings.EPOCH):
+        writer = SummaryWriter(log_dir="runs/" + args.net)
+
         if epoch > args.warm:
             train_scheduler.step(epoch)
 
@@ -170,4 +171,4 @@ if __name__ == '__main__':
         if not epoch % settings.SAVE_EPOCH:
             torch.save(net.state_dict(), checkpoint_path.format(net=args.net, epoch=epoch, type='regular'))
 
-    writer.close()
+        writer.close()
